@@ -81,13 +81,15 @@ module Datagrid
         false
       end
 
+      def column_type(scope, field)
+        scope.first.public_send(field).class.name.downcase.to_sym
+      end
+
       def normalized_column_type(scope, field)
-        return nil if field.nil?
-        return nil if scope.nil?
-        return nil if scope.empty?
+        return nil if field.nil? || scope.nil?
         return nil unless has_column?(scope, field)
 
-        type = scope.first.public_send(field).class.name.downcase.to_sym
+        type = column_type(scope, field)
         return nil unless type
         {
           [:string] => :string,
