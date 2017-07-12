@@ -61,7 +61,7 @@ module Datagrid
 
       def contains(scope, field, value)
         scope.select do |object|
-          object.send(field).to_s.include?(value)
+          object.send(field).to_s.downcase.include?(value.downcase)
         end
       end
 
