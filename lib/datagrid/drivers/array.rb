@@ -80,6 +80,21 @@ module Datagrid
       def can_preload?(scope, association)
         false
       end
+
+      def normalized_column_type(scope, field)
+        return nil if field.nil?
+        return nil if scope.nil?
+        return nil if scope.empty?
+        return nil unless has_column?(scope, field)
+
+        type = scope.first.public_send(field).class.name.downcase.to_sym
+        return nil unless type
+        {
+          [:string] => :string,
+        }.each do |keys, value|
+          return value if keys.include?(type)
+        end
+      end
     end
   end
 end
