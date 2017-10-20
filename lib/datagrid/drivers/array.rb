@@ -61,7 +61,7 @@ module Datagrid
 
       def contains(scope, field, value)
         scope.select do |object|
-          object.send(field).to_s.include?(value)
+          object.send(field).to_s.downcase.include?(value.downcase)
         end
       end
 
@@ -79,6 +79,23 @@ module Datagrid
 
       def can_preload?(scope, association)
         false
+      end
+
+      def column_type(scope, field)
+        scope.first.public_send(field).class.name.downcase.to_sym
+      end
+
+      def normalized_column_type(scope, field)
+        return nil if field.nil? || scope.nil?
+        return nil unless has_column?(scope, field)
+
+        type = column_type(scope, field)
+        return nil unless type
+        {
+          [:string] => :string,
+        }.each do |keys, value|
+          return value if keys.include?(type)
+        end
       end
     end
   end
